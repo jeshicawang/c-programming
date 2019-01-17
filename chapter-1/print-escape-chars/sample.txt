@@ -1,0 +1,4 @@
+this file has
+13 blanks \ spaces
+	2 tabs \ double spaces
+	4 lines \ new line characters

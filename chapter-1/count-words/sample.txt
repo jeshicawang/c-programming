@@ -1,0 +1,2 @@
+here	is	a	line	separated	by	tabs
+here is a line separated by spaces

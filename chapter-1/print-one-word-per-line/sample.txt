@@ -1,0 +1,5 @@
+ here  is	the sample
+text	for a program
+that will print	this file
+one word	per line
+there are even  tabs	throughout 

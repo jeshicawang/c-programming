@@ -2,6 +2,13 @@
   the calculator. Add the modulus (%) operator and provisions for negative
   numbers. */
 
+/* Exercise 4-4. Add commands to print the top element of the stack without
+  popping, to duplicate it, and to swap the top two elements. Add a command
+  to clear the stack. */
+
+/* Exercise 4-5. Add access to library functions like sin, exp, and pow.
+  See <math.h> in Appendix B */
+
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 
@@ -70,6 +77,16 @@ void push(double f)
     printf("error: stack full, can't push %g\n", f);
 }
 
+/* peek: print top value from the stack without popping */
+void peek(void)
+{
+  if (sp > 0)
+    printf("%f\n", val[sp-1]);
+  else {
+    printf("error: stack empty\n");
+  }
+}
+
 /* pop: pop and return top value from stack */
 double pop(void)
 {
@@ -79,6 +96,33 @@ double pop(void)
     printf("error: stack empty\n");
     return 0.0;
   }
+}
+
+/* swap: swap top two elements of stack */
+void swap(void)
+{
+  double temp;
+  if (sp > 1) {
+    temp = val[sp-2];
+    val[sp-2] = val[sp-1];
+    val[sp-1] = temp;
+  } else {
+    printf("error: stack does not have two elements to swap\n");
+  }
+}
+
+/* duplicate: duplicate the stack */
+double duplicate(double copy[])
+{ 
+  int i;
+  for (i = 0; i < sp; i++)
+    copy[i] = val[i];
+}
+
+/* clear: clear the stack */
+void clear(void)
+{
+  sp = 0;
 }
 
 #include <ctype.h>
@@ -94,10 +138,10 @@ int getop(char s[])
   while((s[0] = c = getch()) == ' ' ||  c == '\t')
     ;
   s[1] = '\0';
-  if (!isdigit(c) && c != '.')
+  if (!isdigit(c) && c != '.' && c != '-')
     return c; /* not a number */
   i = 0;
-  if (isdigit(c)) /* collect integer part */
+  if (isdigit(c) || c == '-') /* collect integer part */
     while (isdigit(s[++i] = c = getch()))
       ;
   if (c == '.') /* collect fraction part */
@@ -106,7 +150,7 @@ int getop(char s[])
   s[i] = '\0';
   if (c != EOF)
     ungetch(c);
-  return NUMBER;
+  return (i == 1 && s[0] == '-') ? '-' : NUMBER;
 }
 
 #define BUFSIZE 100

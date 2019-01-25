@@ -9,8 +9,13 @@
 /* Exercise 4-5. Add access to library functions like sin, exp, and pow.
   See <math.h> in Appendix B */
 
+/* Exercise 4-6. Add commands for handling variables. (It's easy to provide
+  twenty-six variables with single-letter names.) Add a variable for the
+  most recently printed value. */
+
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
+#include <math.h> /* for sin(), exp(), pow() */
 
 #define MAXOF 100   /* max size of operand or operator */
 #define NUMBER '0'  /* signal that a number was found */
@@ -51,6 +56,16 @@ int main()
     case '%':
       op2 = pop();
       push((int)pop() % (int)op2);
+      break;
+    case '^':
+      op2 = pop();
+      push(pow(pop(), op2));
+      break;
+    case 's':
+      push(sin(pop()));
+      break;
+    case 'e':
+      push(exp(pop()));
       break;
     case '\n':
       printf("\t%.8g\n", pop());
@@ -112,7 +127,7 @@ void swap(void)
 }
 
 /* duplicate: duplicate the stack */
-double duplicate(double copy[])
+void duplicate(double copy[])
 { 
   int i;
   for (i = 0; i < sp; i++)

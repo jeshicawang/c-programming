@@ -13,6 +13,13 @@
   twenty-six variables with single-letter names.) Add a variable for the
   most recently printed value. */
 
+/* Exercise 4-7. Write a routine ungets(s) that will push back an entire
+  string onto the input. Should ungets know about buf and bufp, or should it
+  just use ungetch? */
+
+/* Exercise 4-8. Suppose there will never be more than one character of
+  pushback. Modify getch and ungetch accordingly. */
+
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 #include <math.h> /* for sin(), exp(), pow() */
@@ -22,20 +29,32 @@
 
 int getop(char []);
 void push(double);
+void peek(void);
 double pop(void);
+void swap(void);
+void duplicate(double copy[]);
+void clear(void);
 
 /* reverse Polish calculator */
 int main()
 {
-  int type;
-  double op2;
+  int type, var;
+  double op2, v;
   char s[MAXOF];
+  double variable[26];
 
   while ((type = getop(s)) != EOF) {
     switch (type) {
     case NUMBER:
       push(atof(s));
-      break; 
+      break;
+    case '=':
+      pop();
+      if (var >= 'A' && var <= 'Z')
+        variable[var-'A'] = pop();
+      else
+        printf("error: no variable name\n");
+      break;
     case '+':
       push(pop() + pop());
       break;
@@ -68,12 +87,19 @@ int main()
       push(exp(pop()));
       break;
     case '\n':
-      printf("\t%.8g\n", pop());
+      v = pop();
+      printf("\t%.8g\n", v);
       break;
     default:
-      printf("error: unknown command %s\n", s);
+      if (type >= 'A' && type <= 'Z')
+        push(variable[type-'A']);
+      else if (type == 'v')
+        push(v);
+      else
+        printf("error: unknown command %s\n", s);
       break;
     }
+    var = type;
   }
   return 0;
 }
@@ -166,6 +192,15 @@ int getop(char s[])
   if (c != EOF)
     ungetch(c);
   return (i == 1 && s[0] == '-') ? '-' : NUMBER;
+}
+
+void ungets(char s[])
+{
+  int i;
+  for (i = 0; s[i] != '\0'; i++)
+    ;
+  for (i--; i >= 0; i--)
+    ungetch(s[i]);
 }
 
 #define BUFSIZE 100
